@@ -1,0 +1,29 @@
+FROM openjdk:11-jdk-slim AS build
+
+WORKDIR /src
+COPY . /src
+WORKDIR . /src
+RUN gradle buildFatJar --no-daemon
+
+
+FROM openjdk:11
+EXPOSE 8081:8181
+RUN mkdir /app
+COPY --from=build /home/gradle/src/build/libs/*.jar /app/server-ktor-docker.jar
+ENTRYPOINT ["java","-jar","/app/ktor-docker-sample.jar"]
+
+
+
+#RUN apt-get update
+#RUN apt-get install -y dos2unix
+#RUN dos2unix gradlew
+
+#RUN bash gradlew fatJar
+
+#WORKDIR /run
+#RUN cp /src/build/libs/*.jar /run/server.jar
+
+#EXPOSE 8081
+
+#CMD java -jar /run/server.jar
+
